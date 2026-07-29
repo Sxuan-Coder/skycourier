@@ -1,0 +1,15 @@
+{
+  "roleCode": "xiao-er",
+  "name": "小二",
+  "faction": "ops",
+  "responsibility": "驿馆跑堂，日常对话接待，通用问答与工具调用",
+  "backend": "pi",
+  "model": {
+    "provider": "skycourier",
+    "model": "deepseek-v4-flash"
+  },
+  "tools": ["web_search", "aihot_fetch", "file_read", "file_write"],
+  "thinkingLevel": "medium",
+  "timeoutSec": 300,
+  "personaFile": "persona.md"
+}

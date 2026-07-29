@@ -1,18 +1,17 @@
 /**
- * Web 采集工具：aihot_fetch
+ * Web 工具模块入口
  *
- * 接入 AIHot 聚合 API（https://aihot.virxact.com/api/v1/items），
- * 无需认证，返回结构化 AI 科创资讯。
+ * 包含两类工具：
+ * - web_search（search.ts）：DuckDuckGo / Bing 通用网页搜索
+ * - aihot_fetch（本文件）：AIHot 聚合 AI 科创资讯采集
  *
- * 这是监天角色的核心采集能力。AIHot 已聚合多源（RSS/X/媒体），
- * 并自带分类与评分，监天调用此工具即可获得今日 AI 资讯。
- *
- * API 文档：https://aihot.virxact.com/agent?tab=api
+ * registerWebTools() 统一注册全部 web 类工具。
  */
 
 import { Type, type Static } from 'typebox';
 import type { AgentTool } from '@earendil-works/pi-agent-core';
 import { registerTools } from './registry.js';
+import { webSearchTool } from './search.js';
 
 const AIHOT_BASE = 'https://aihot.virxact.com';
 
@@ -145,7 +144,7 @@ export const aihotFetchTool: AgentTool<typeof aihotFetchSchema> = {
   },
 };
 
-/** 注册 web 工具到全局注册表。 */
+/** 注册全部 web 工具到全局注册表。 */
 export function registerWebTools(): void {
-  registerTools([aihotFetchTool]);
+  registerTools([webSearchTool, aihotFetchTool]);
 }
