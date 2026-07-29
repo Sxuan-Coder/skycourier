@@ -1,0 +1,32 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+
+# 运行时工作区（handoff 文件、产物、日志）
+workspace/
+artifacts/
+
+# 环境与凭证
+.env
+.env.local
+*.local
+
+# 飞书凭证
+lark-credentials.json
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+.zcode
+
+# 文档和交付
+docs/
+handoff/

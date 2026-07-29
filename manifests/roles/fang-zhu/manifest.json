@@ -1,0 +1,15 @@
+{
+  "roleCode": "fang-zhu",
+  "name": "坊主",
+  "faction": "ops",
+  "responsibility": "驿馆总管，统筹全链路，调度各角色执行，不做具体情报活",
+  "backend": "pi",
+  "model": {
+    "provider": "skycourier",
+    "model": "deepseek-v4-flash"
+  },
+  "tools": [],
+  "thinkingLevel": "high",
+  "timeoutSec": 600,
+  "personaFile": "persona.md"
+}

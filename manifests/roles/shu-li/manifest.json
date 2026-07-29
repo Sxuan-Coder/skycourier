@@ -1,0 +1,15 @@
+{
+  "roleCode": "shu-li",
+  "name": "书吏",
+  "faction": "yizhan",
+  "responsibility": "飞书知识库标准化归档、目录维护、标签管理",
+  "backend": "pi",
+  "model": {
+    "provider": "skycourier",
+    "model": "deepseek-v4-flash"
+  },
+  "tools": ["file_read", "lark_doc_create", "lark_wiki_move", "lark_base_append"],
+  "thinkingLevel": "low",
+  "timeoutSec": 180,
+  "personaFile": "persona.md"
+}

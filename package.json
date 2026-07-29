@@ -1,0 +1,31 @@
+{
+  "name": "skywatch-courier",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "观天驿 Skywatch Courier - 科创情报多 Agent 集群",
+  "engines": {
+    "node": ">=22.16.0"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.json",
+    "run:workflow": "tsx src/cli/run-workflow.ts",
+    "run:daily": "tsx src/cli/run-workflow.ts workflows/daily-brief.workflow.json",
+    "chat": "tsx src/cli/chat.ts"
+  },
+  "dependencies": {
+    "@earendil-works/pi-agent-core": "0.82.1",
+    "@earendil-works/pi-ai": "0.82.1",
+    "dotenv": "^16.4.7",
+    "typebox": "1.1.38"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.19",
+    "tsx": "4.22.1",
+    "typescript": "5.9.3"
+  },
+  "workspaces": []
+}

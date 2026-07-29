@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0",
+  "name": "每日科创情报日报",
+  "description": "观天驿 MVP 主线：监天采集 → 伯乐筛选 → 卖报翁整编 → 书吏归档 → 驿卒推送",
+  "entryNodeId": "start",
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "label": "定时触发",
+      "config": {
+        "trigger": "cron",
+        "schedule": "0 8 * * *",
+        "inputFile": "manifests/roles/jian-tian/sources.example.json"
+      }
+    },
+    {
+      "id": "jian-tian",
+      "type": "agent",
+      "label": "监天",
+      "roleCode": "jian-tian",
+      "backend": "pi",
+      "kind": "worker",
+      "config": {
+        "sourcesFile": "manifests/roles/jian-tian/sources.example.json",
+        "outputFile": "handoff/jian-tian-raw-items.json"
+      }
+    },
+    {
+      "id": "bo-le",
+      "type": "agent",
+      "label": "伯乐",
+      "roleCode": "bo-le",
+      "backend": "pi",
+      "kind": "worker",
+      "config": {
+        "inputFile": "handoff/jian-tian-raw-items.json",
+        "outputFile": "handoff/bo-le-curated-items.json"
+      }
+    },
+    {
+      "id": "mai-bao-weng",
+      "type": "agent",
+      "label": "卖报翁",
+      "roleCode": "mai-bao-weng",
+      "backend": "cli",
+      "kind": "worker",
+      "config": {
+        "inputFile": "handoff/bo-le-curated-items.json",
+        "outputFile": "handoff/mai-bao-weng-daily-brief.md"
+      }
+    },
+    {
+      "id": "shu-li",
+      "type": "agent",
+      "label": "书吏",
+      "roleCode": "shu-li",
+      "backend": "pi",
+      "kind": "worker",
+      "config": {
+        "inputFile": "handoff/mai-bao-weng-daily-brief.md",
+        "outputFile": "handoff/shu-li-archive-meta.json",
+        "wikiRoot": "【观天驿 Skywatch Courier】科创情报驿站"
+      }
+    },
+    {
+      "id": "yi-zu",
+      "type": "agent",
+      "label": "驿卒",
+      "roleCode": "yi-zu",
+      "backend": "pi",
+      "kind": "worker",
+      "config": {
+        "briefFile": "handoff/mai-bao-weng-daily-brief.md",
+        "archiveMetaFile": "handoff/shu-li-archive-meta.json",
+        "outputFile": "handoff/yi-zu-dispatch.json"
+      }
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "label": "完成"
+    }
+  ],
+  "edges": [
+    { "id": "e1", "from": "start", "to": "jian-tian" },
+    { "id": "e2", "from": "jian-tian", "to": "bo-le" },
+    { "id": "e3", "from": "bo-le", "to": "mai-bao-weng" },
+    { "id": "e4", "from": "mai-bao-weng", "to": "shu-li" },
+    { "id": "e5", "from": "shu-li", "to": "yi-zu" },
+    { "id": "e6", "from": "yi-zu", "to": "end" }
+  ],
+  "execution": {
+    "mode": "dag",
+    "maxConcurrency": 1,
+    "timeoutSec": 1800
+  }
+}

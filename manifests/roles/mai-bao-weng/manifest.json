@@ -1,0 +1,19 @@
+{
+  "roleCode": "mai-bao-weng",
+  "name": "卖报翁",
+  "faction": "guantian",
+  "responsibility": "汇总筛选资讯，整编生成每日科创情报日报",
+  "backend": "cli",
+  "model": {
+    "provider": "skycourier",
+    "model": "deepseek-v4-flash"
+  },
+  "tools": ["file_read", "file_write"],
+  "thinkingLevel": "high",
+  "timeoutSec": 600,
+  "personaFile": "persona.md",
+  "cliConfig": {
+    "tool": "claude-code",
+    "printFlag": "-p"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "监天信源清单示例。监天 Agent 每次运行读取此清单逐源抓取。",
+  "sources": [
+    {
+      "name": "Hacker News 精选",
+      "type": "rss",
+      "url": "https://hnrss.org/frontpage",
+      "category": "综合科技",
+      "enabled": true
+    },
+    {
+      "name": "Anthropic News",
+      "type": "web",
+      "url": "https://www.anthropic.com/news",
+      "category": "AI厂商",
+      "enabled": true
+    },
+    {
+      "name": "OpenAI Research",
+      "type": "rss",
+      "url": "https://openai.com/news/rss.xml",
+      "category": "AI厂商",
+      "enabled": true
+    },
+    {
+      "name": "DeepMind Blog",
+      "type": "rss",
+      "url": "https://deepmind.google/blog/rss.xml",
+      "category": "AI研究",
+      "enabled": true
+    },
+    {
+      "name": "rust-lang Releases",
+      "type": "github",
+      "url": "https://github.com/rust-lang/rust/releases",
+      "repo": "rust-lang/rust",
+      "category": "开源动态",
+      "enabled": true
+    }
+  ]
+}

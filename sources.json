@@ -1,0 +1,496 @@
+{
+  "meta": {
+    "version": "1.0",
+    "updatedAt": "2025-07-15T00:00:00Z",
+    "description": "观天驿信源清单 - 科创领域全覆盖"
+  },
+  "sources": [
+    "=== AI / 大模型 ===",
+    {
+      "id": "huggingface-daily",
+      "name": "HuggingFace Daily Papers",
+      "url": "https://huggingface.co/papers",
+      "type": "web",
+      "domain": ["AI", "大模型"],
+      "frequency": "daily"
+    },
+    {
+      "id": "arxiv-cs-ai",
+      "name": "arXiv cs.AI",
+      "url": "https://arxiv.org/list/cs.AI/recent",
+      "type": "web",
+      "domain": ["AI", "大模型"],
+      "frequency": "daily"
+    },
+    {
+      "id": "openai-blog",
+      "name": "OpenAI Blog",
+      "url": "https://openai.com/blog",
+      "type": "web",
+      "domain": ["AI", "大模型"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "anthropic-blog",
+      "name": "Anthropic Blog",
+      "url": "https://www.anthropic.com/blog",
+      "type": "web",
+      "domain": ["AI", "大模型"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "google-ai-blog",
+      "name": "Google AI Blog",
+      "url": "https://ai.googleblog.com/",
+      "type": "web",
+      "domain": ["AI", "大模型"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "metafair-ai-blog",
+      "name": "Meta AI Blog",
+      "url": "https://ai.meta.com/blog/",
+      "type": "web",
+      "domain": ["AI", "大模型"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "mistral-news",
+      "name": "Mistral AI News",
+      "url": "https://mistral.ai/news/",
+      "type": "web",
+      "domain": ["AI", "大模型"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "a16z-ai",
+      "name": "a16z AI Blog",
+      "url": "https://a16z.com/ai/",
+      "type": "web",
+      "domain": ["AI", "大模型", "投资"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "mnr-hackernews",
+      "name": "Hacker News - AI",
+      "url": "https://hn.algolia.com/?query=AI&sort=byDate&type=story",
+      "type": "web",
+      "domain": ["AI", "大模型", "综合"],
+      "frequency": "realtime"
+    },
+    {
+      "id": "36kr-ai",
+      "name": "36氪 - 人工智能",
+      "url": "https://36kr.com/search/articles/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD",
+      "type": "web",
+      "domain": ["AI", "大模型"],
+      "frequency": "daily"
+    },
+    {
+      "id": "jiqizhixin",
+      "name": "机器之心",
+      "url": "https://www.jiqizhixin.com/",
+      "type": "web",
+      "domain": ["AI", "大模型"],
+      "frequency": "daily"
+    },
+
+    "=== 半导体 / 芯片 ===",
+    {
+      "id": "semiengineering",
+      "name": "Semiconductor Engineering",
+      "url": "https://semiengineering.com/",
+      "type": "web",
+      "domain": ["半导体", "芯片制造"],
+      "frequency": "daily"
+    },
+    {
+      "id": "anandtech",
+      "name": "AnandTech",
+      "url": "https://www.anandtech.com/",
+      "type": "rss",
+      "domain": ["半导体", "硬件"],
+      "frequency": "daily"
+    },
+    {
+      "id": "tomshardware",
+      "name": "Tom's Hardware",
+      "url": "https://www.tomshardware.com/",
+      "type": "rss",
+      "domain": ["半导体", "硬件"],
+      "frequency": "daily"
+    },
+    {
+      "id": "semiwiki",
+      "name": "SemiWiki",
+      "url": "https://semiwiki.com/",
+      "type": "web",
+      "domain": ["半导体"],
+      "frequency": "daily"
+    },
+    {
+      "id": "eet-china",
+      "name": "EET电子工程专辑",
+      "url": "https://www.eet-china.com/",
+      "type": "web",
+      "domain": ["半导体", "电子工程"],
+      "frequency": "daily"
+    },
+    {
+      "id": "laoyaoba",
+      "name": "老杳吧 (集微网)",
+      "url": "https://www.laoyaoba.com/",
+      "type": "web",
+      "domain": ["半导体", "产业"],
+      "frequency": "daily"
+    },
+    {
+      "id": "tsmc-blog",
+      "name": "TSMC News",
+      "url": "https://www.tsmc.com/english/news-events",
+      "type": "web",
+      "domain": ["半导体", "晶圆代工"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "asml-news",
+      "name": "ASML News",
+      "url": "https://www.asml.com/en/news",
+      "type": "web",
+      "domain": ["半导体", "光刻"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "icinsights",
+      "name": "IC Insights",
+      "url": "https://www.icinsights.com/news/",
+      "type": "web",
+      "domain": ["半导体", "市场分析"],
+      "frequency": "weekly"
+    },
+
+    "=== 新能源 / 碳中和 ===",
+    {
+      "id": "pv-magazine",
+      "name": "PV Magazine",
+      "url": "https://www.pv-magazine.com/",
+      "type": "rss",
+      "domain": ["新能源", "光伏"],
+      "frequency": "daily"
+    },
+    {
+      "id": "electrek",
+      "name": "Electrek",
+      "url": "https://electrek.co/",
+      "type": "rss",
+      "domain": ["新能源", "电动汽车"],
+      "frequency": "daily"
+    },
+    {
+      "id": "cleantechnica",
+      "name": "CleanTechnica",
+      "url": "https://cleantechnica.com/",
+      "type": "rss",
+      "domain": ["新能源", "清洁技术"],
+      "frequency": "daily"
+    },
+    {
+      "id": "energy-storage",
+      "name": "Energy Storage News",
+      "url": "https://www.energy-storage.news/",
+      "type": "web",
+      "domain": ["新能源", "储能"],
+      "frequency": "daily"
+    },
+    {
+      "id": "bloombergnef",
+      "name": "BloombergNEF",
+      "url": "https://about.bnef.com/",
+      "type": "web",
+      "domain": ["新能源", "能源转型"],
+      "frequency": "weekly"
+    },
+    {
+      "id": "catl-news",
+      "name": "CATL News (宁德时代)",
+      "url": "https://www.catl.com/en/news/",
+      "type": "web",
+      "domain": ["新能源", "电池"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "tesla-news",
+      "name": "Tesla Newsroom",
+      "url": "https://www.tesla.com/newsroom",
+      "type": "web",
+      "domain": ["新能源", "电动汽车"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "nrel-news",
+      "name": "NREL News",
+      "url": "https://www.nrel.gov/news/",
+      "type": "web",
+      "domain": ["新能源", "可再生能源"],
+      "frequency": "weekly"
+    },
+
+    "=== 生物医药 / 生命科学 ===",
+    {
+      "id": "fiercebiotech",
+      "name": "Fierce Biotech",
+      "url": "https://www.fiercebiotech.com/",
+      "type": "rss",
+      "domain": ["生物医药", "生物技术"],
+      "frequency": "daily"
+    },
+    {
+      "id": "fiercepharma",
+      "name": "Fierce Pharma",
+      "url": "https://www.fiercepharma.com/",
+      "type": "rss",
+      "domain": ["生物医药", "制药"],
+      "frequency": "daily"
+    },
+    {
+      "id": "endpts",
+      "name": "Endpoints News",
+      "url": "https://endpts.com/",
+      "type": "web",
+      "domain": ["生物医药"],
+      "frequency": "daily"
+    },
+    {
+      "id": "biocentury",
+      "name": "BioCentury",
+      "url": "https://www.biocentury.com/",
+      "type": "web",
+      "domain": ["生物医药", "投资"],
+      "frequency": "daily"
+    },
+    {
+      "id": "nature-bio",
+      "name": "Nature Biotechnology",
+      "url": "https://www.nature.com/nbt/",
+      "type": "rss",
+      "domain": ["生物医药", "学术"],
+      "frequency": "weekly"
+    },
+    {
+      "id": "cell-press",
+      "name": "Cell Press",
+      "url": "https://www.cell.com/",
+      "type": "web",
+      "domain": ["生命科学", "学术"],
+      "frequency": "weekly"
+    },
+    {
+      "id": "genengnews",
+      "name": "Genetic Engineering & Biotechnology News",
+      "url": "https://www.genengnews.com/",
+      "type": "web",
+      "domain": ["生物技术"],
+      "frequency": "daily"
+    },
+    {
+      "id": "yaozhi",
+      "name": "药智网",
+      "url": "https://www.yaozh.com/",
+      "type": "web",
+      "domain": ["生物医药", "中国"],
+      "frequency": "daily"
+    },
+
+    "=== 智能制造 / 机器人 / 自动驾驶 ===",
+    {
+      "id": "spectrum-ieee-robotics",
+      "name": "IEEE Spectrum - Robotics",
+      "url": "https://spectrum.ieee.org/robotics",
+      "type": "rss",
+      "domain": ["机器人", "自动化"],
+      "frequency": "daily"
+    },
+    {
+      "id": "the-robot-report",
+      "name": "The Robot Report",
+      "url": "https://www.therobotreport.com/",
+      "type": "web",
+      "domain": ["机器人"],
+      "frequency": "daily"
+    },
+    {
+      "id": "tesla-ai",
+      "name": "Tesla AI (X/Twitter)",
+      "url": "https://x.com/Tesla_AI",
+      "type": "web",
+      "domain": ["自动驾驶", "机器人"],
+      "frequency": "realtime"
+    },
+    {
+      "id": "waymo-blog",
+      "name": "Waymo Blog",
+      "url": "https://waymo.com/blog/",
+      "type": "web",
+      "domain": ["自动驾驶"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "cruise-news",
+      "name": "Cruise News",
+      "url": "https://www.getcruise.com/news/",
+      "type": "web",
+      "domain": ["自动驾驶"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "boston-dynamics",
+      "name": "Boston Dynamics Blog",
+      "url": "https://www.bostondynamics.com/blog",
+      "type": "web",
+      "domain": ["机器人"],
+      "frequency": "irregular"
+    },
+    {
+      "id": "mp-2025-manufacturing",
+      "name": "Manufacturing Drive",
+      "url": "https://www.manufacturingdive.com/",
+      "type": "web",
+      "domain": ["智能制造"],
+      "frequency": "daily"
+    },
+    {
+      "id": "industryweek",
+      "name": "IndustryWeek",
+      "url": "https://www.industryweek.com/",
+      "type": "web",
+      "domain": ["智能制造"],
+      "frequency": "daily"
+    },
+
+    "=== 综合科技媒体 / 产业平台 ===",
+    {
+      "id": "techcrunch",
+      "name": "TechCrunch",
+      "url": "https://techcrunch.com/",
+      "type": "rss",
+      "domain": ["综合"],
+      "frequency": "daily"
+    },
+    {
+      "id": "the-verge",
+      "name": "The Verge",
+      "url": "https://www.theverge.com/",
+      "type": "rss",
+      "domain": ["综合"],
+      "frequency": "daily"
+    },
+    {
+      "id": "arstechnica",
+      "name": "Ars Technica",
+      "url": "https://arstechnica.com/",
+      "type": "rss",
+      "domain": ["综合"],
+      "frequency": "daily"
+    },
+    {
+      "id": "wired",
+      "name": "WIRED",
+      "url": "https://www.wired.com/",
+      "type": "rss",
+      "domain": ["综合"],
+      "frequency": "daily"
+    },
+    {
+      "id": "spectrum-ieee",
+      "name": "IEEE Spectrum",
+      "url": "https://spectrum.ieee.org/",
+      "type": "rss",
+      "domain": ["综合", "工程"],
+      "frequency": "daily"
+    },
+    {
+      "id": "nature-news",
+      "name": "Nature News",
+      "url": "https://www.nature.com/news/",
+      "type": "rss",
+      "domain": ["综合", "学术"],
+      "frequency": "daily"
+    },
+    {
+      "id": "sciencedaily",
+      "name": "ScienceDaily",
+      "url": "https://www.sciencedaily.com/",
+      "type": "rss",
+      "domain": ["综合", "科学"],
+      "frequency": "daily"
+    },
+
+    "=== 中国特色信源 ===",
+    {
+      "id": "huxiu",
+      "name": "虎嗅",
+      "url": "https://www.huxiu.com/",
+      "type": "web",
+      "domain": ["综合", "科技商业"],
+      "frequency": "daily"
+    },
+    {
+      "id": "36kr-home",
+      "name": "36氪",
+      "url": "https://36kr.com/",
+      "type": "web",
+      "domain": ["综合", "创投"],
+      "frequency": "daily"
+    },
+    {
+      "id": "leiphone",
+      "name": "雷锋网",
+      "url": "https://www.leiphone.com/",
+      "type": "web",
+      "domain": ["综合", "AI"],
+      "frequency": "daily"
+    },
+    {
+      "id": "qbitai",
+      "name": "量子位",
+      "url": "https://www.qbitai.com/",
+      "type": "web",
+      "domain": ["AI", "自动驾驶"],
+      "frequency": "daily"
+    },
+    {
+      "id": "ithome",
+      "name": "IT之家",
+      "url": "https://www.ithome.com/",
+      "type": "web",
+      "domain": ["综合", "数码"],
+      "frequency": "daily"
+    },
+    {
+      "id": "zaker-tech",
+      "name": "ZAKER科技",
+      "url": "https://www.myzaker.com/",
+      "type": "web",
+      "domain": ["综合"],
+      "frequency": "daily"
+    },
+
+    "=== GitHub Release & Trending ===",
+    {
+      "id": "github-trending",
+      "name": "GitHub Trending (Daily)",
+      "url": "https://github.com/trending",
+      "type": "web",
+      "domain": ["开源", "综合"],
+      "frequency": "daily"
+    },
+    {
+      "id": "github-trending-ai",
+      "name": "GitHub Trending AI",
+      "url": "https://github.com/trending?since=daily&spoken_language_code=",
+      "type": "web",
+      "domain": ["开源", "AI"],
+      "frequency": "daily"
+    }
+  ]
+}

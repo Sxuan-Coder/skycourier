@@ -1,0 +1,15 @@
+{
+  "roleCode": "yi-zu",
+  "name": "驿卒",
+  "faction": "yizhan",
+  "responsibility": "定时调度推送，将简报分发飞书群组、邮箱、对外RSS",
+  "backend": "pi",
+  "model": {
+    "provider": "skycourier",
+    "model": "deepseek-v4-flash"
+  },
+  "tools": ["file_read", "lark_im_send", "lark_im_card"],
+  "thinkingLevel": "low",
+  "timeoutSec": 120,
+  "personaFile": "persona.md"
+}

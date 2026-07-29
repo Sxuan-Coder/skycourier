@@ -1,0 +1,15 @@
+{
+  "roleCode": "jian-tian",
+  "name": "监天",
+  "faction": "guantian",
+  "responsibility": "全网信源巡检，多渠道抓取原始情报素材，只收集不筛选",
+  "backend": "pi",
+  "model": {
+    "provider": "skycourier",
+    "model": "deepseek-v4-flash"
+  },
+  "tools": ["aihot_fetch", "file_write"],
+  "thinkingLevel": "low",
+  "timeoutSec": 300,
+  "personaFile": "persona.md"
+}

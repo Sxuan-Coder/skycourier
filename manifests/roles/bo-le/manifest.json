@@ -1,0 +1,15 @@
+{
+  "roleCode": "bo-le",
+  "name": "伯乐",
+  "faction": "guantian",
+  "responsibility": "资讯去重归一、AI 相关性打分、噪声过滤，甄别千里马",
+  "backend": "pi",
+  "model": {
+    "provider": "skycourier",
+    "model": "deepseek-v4-flash"
+  },
+  "tools": ["file_read", "file_write"],
+  "thinkingLevel": "medium",
+  "timeoutSec": 300,
+  "personaFile": "persona.md"
+}
