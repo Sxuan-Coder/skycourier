@@ -13,6 +13,7 @@
  */
 
 import type { AgentEvent } from '@earendil-works/pi-agent-core';
+import { StreamMarkdown } from './md-renderer.js';
 
 /** 角色工具名 → 中文名映射（call_jian_tian → 监天）。 */
 const ROLE_NAME_MAP: Record<string, string> = {
@@ -50,7 +51,8 @@ const RESET = '\x1b[0m';
  */
 export function createProgressHandler(verbose = true) {
   const toolOutputs = new Map<string, number>(); // toolCallId → 输出长度
-  let streamingReply = false; // 是否正在流式输出坊主回复
+  let streamingReply = false; // 是否正在流式输出回复
+  const md = new StreamMarkdown(); // Markdown 渲染器（跨消息复用，每条消息后 reset）
 
   return (event: AgentEvent) => {
     switch (event.type) {
@@ -72,7 +74,7 @@ export function createProgressHandler(verbose = true) {
         break;
       }
 
-      // ── 流式文本：坊主回复逐字输出 ──
+      // ── 流式文本：逐字输出 + Markdown 实时渲染 ──
       case 'message_update': {
         if (!verbose) break;
         const ame = event.assistantMessageEvent;
@@ -81,14 +83,19 @@ export function createProgressHandler(verbose = true) {
             streamingReply = true;
             process.stdout.write('\n');
           }
-          process.stdout.write(ame.delta);
+          // 行缓冲渲染：完整行才输出，表格行自动缓冲
+          const rendered = md.push(ame.delta);
+          if (rendered) process.stdout.write(rendered);
         }
         break;
       }
 
       case 'message_end': {
-        // assistant 消息结束，重置流式标记（下一轮重新判断）
+        // assistant 消息结束：冲刷渲染器残余 + 重置
         if (event.message.role === 'assistant') {
+          const remaining = md.flush();
+          if (remaining) process.stdout.write(remaining + '\n');
+          md.reset();
           streamingReply = false;
         }
         break;
