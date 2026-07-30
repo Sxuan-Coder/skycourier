@@ -729,9 +729,50 @@ export const executeWorkflowTool: AgentTool<typeof executeWorkflowSchema> = {
   },
 };
 
+// ─── 工具 4：transfer_to_agent ─────────────────────────────────────
+
+const transferToAgentSchema = Type.Object({
+  targetRoleCode: Type.String({
+    description: '目标角色代号：fang-zhu / xiao-er / jian-tian / bo-le / xuan-ping / mai-bao-weng / ce-shi / suan-fu / shan-fu / shu-li / yi-zu / cha-fu',
+  }),
+  reason: Type.String({ description: '转交原因，如"用户需要生成日报，需要坊主调度"。会被传递给目标角色作为上下文。' }),
+  userRequest: Type.Optional(Type.String({ description: '用户的原始请求（如果清楚）。转交后目标角色会收到此上下文。' })),
+});
+
+type TransferToAgentParams = Static<typeof transferToAgentSchema>;
+
+export const transferToAgentTool: AgentTool<typeof transferToAgentSchema> = {
+  name: 'transfer_to_agent',
+  label: '转交其他角色',
+  description: '将当前会话转交给另一个角色。当你发现当前任务需要其他角色的能力时调用此工具。调用后，用户会继续与目标角色对话。',
+  parameters: transferToAgentSchema,
+  execute: async (_toolCallId, params: TransferToAgentParams) => {
+    const context = params.userRequest
+      ? `用户原始请求：${params.userRequest}\n转交原因：${params.reason}`
+      : params.reason;
+
+    return {
+      content: [{
+        type: 'text',
+        text: `[TRANSFER_TO:${params.targetRoleCode}] ${context}`,
+      }],
+      details: {
+        targetRoleCode: params.targetRoleCode,
+        reason: params.reason,
+        userRequest: params.userRequest,
+      },
+    };
+  },
+};
+
 // ─── 注册 ─────────────────────────────────────────────────────────
 
 export function registerOrchestratorTools(): void {
-  registerTools([generateWorkflowDslTool, modifyWorkflowDslTool, executeWorkflowTool]);
-  console.log('[orchestrator] 编排工具已注册: generate_workflow_dsl, modify_workflow_dsl, execute_workflow');
+  registerTools([
+    generateWorkflowDslTool,
+    modifyWorkflowDslTool,
+    executeWorkflowTool,
+    transferToAgentTool,
+  ]);
+  console.log('[orchestrator] 编排工具已注册: generate_workflow_dsl, modify_workflow_dsl, execute_workflow, transfer_to_agent');
 }

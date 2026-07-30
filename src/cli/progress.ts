@@ -3,9 +3,11 @@
  *
  * 解决"后台在跑但用户看不到"的体验问题。
  * 订阅坊主 Agent 事件，在终端打印：
- *   - 工具调用开始：» 正在调用 监天 …
- *   - 工具调用结束：✓ 监天 完成（1234 字）
+ *   - 工具调用开始：» [坊主] 正在调用 监天 …
+ *   - 工具调用结束：✓ [坊主] 监天 完成（1234 字）
  *   - 流式文本：坊主回复逐字输出
+ *
+ * 支持动态切换角色名，转交后自动更新标识。
  *
  * 注意：角色工具（call_xxx）内部的子 agent 事件不会冒泡到坊主，
  * 所以这里看到的是"坊主调用了哪个角色"，而非角色内部细节——
@@ -38,74 +40,90 @@ function toolDisplayName(toolName: string): string {
 const CYAN = '\x1b[36m';
 const GREEN = '\x1b[32m';
 const YELLOW = '\x1b[33m';
+const MAGENTA = '\x1b[35m';
 const RESET = '\x1b[0m';
 
 /**
  * 创建一个 PI 事件处理器，输出实时进度。
  *
  * 用法：
- *   const onEvent = createProgressHandler();
+ *   const onEvent = createProgressHandler('坊主');
  *   agent.subscribe(onEvent);
  *
- * @param verbose 是否输出坊主流式文本（默认 true）
+ * @param roleName 当前角色的中文名，用于进度标识。可通过 setRoleName() 更新。
+ * @param verbose  是否输出流式文本（默认 true）
  */
-export function createProgressHandler(verbose = true) {
+export function createProgressHandler(roleName?: string, verbose = true) {
+  let currentRole = roleName ?? '';
   const toolOutputs = new Map<string, number>(); // toolCallId → 输出长度
   let streamingReply = false; // 是否正在流式输出回复
   const md = new StreamMarkdown(); // Markdown 渲染器（跨消息复用，每条消息后 reset）
 
-  return (event: AgentEvent) => {
-    switch (event.type) {
-      // ── 工具调用：核心进度信号 ──
-      case 'tool_execution_start': {
-        const name = toolDisplayName(event.toolName);
-        const task = typeof event.args?.task === 'string' ? truncate(event.args.task, 40) : '';
-        process.stdout.write(`\n  ${CYAN}» 正在调用 ${name}${task ? `：${task}` : ''}…${RESET}`);
-        break;
-      }
+  /** 切换角色名（转交 /agent 命令时调用）。 */
+  function setRoleName(name: string): void {
+    currentRole = name;
+  }
 
-      case 'tool_execution_end': {
-        const name = toolDisplayName(event.toolName);
-        const len = estimateOutputLength(event.result);
-        toolOutputs.set(event.toolCallId, len);
-        const errTag = event.isError ? `${YELLOW}（出错）${RESET}` : '';
-        const sizeTag = len > 0 ? `（${len} 字）` : '';
-        process.stdout.write(`\r  ${GREEN}✓ ${name} 完成${sizeTag}${errTag}${RESET}          \n`);
-        break;
-      }
+  /** 构造角色标识前缀。 */
+  function roleBadge(): string {
+    return currentRole ? `[${MAGENTA}${currentRole}${RESET}]` : '';
+  }
 
-      // ── 流式文本：逐字输出 + Markdown 实时渲染 ──
-      case 'message_update': {
-        if (!verbose) break;
-        const ame = event.assistantMessageEvent;
-        if (ame.type === 'text_delta') {
-          if (!streamingReply) {
-            streamingReply = true;
-            process.stdout.write('\n');
+  return Object.assign(
+    (event: AgentEvent) => {
+      switch (event.type) {
+        // ── 工具调用：核心进度信号 ──
+        case 'tool_execution_start': {
+          const name = toolDisplayName(event.toolName);
+          const task = typeof event.args?.task === 'string' ? truncate(event.args.task, 40) : '';
+          process.stdout.write(`\n  ${roleBadge()} ${CYAN}» 正在调用 ${name}${task ? `：${task}` : ''}…${RESET}`);
+          break;
+        }
+
+        case 'tool_execution_end': {
+          const name = toolDisplayName(event.toolName);
+          const len = estimateOutputLength(event.result);
+          toolOutputs.set(event.toolCallId, len);
+          const errTag = event.isError ? `${YELLOW}（出错）${RESET}` : '';
+          const sizeTag = len > 0 ? `（${len} 字）` : '';
+          process.stdout.write(`\r  ${roleBadge()} ${GREEN}✓ ${name} 完成${sizeTag}${errTag}${RESET}          \n`);
+          break;
+        }
+
+        // ── 流式文本：逐字输出 + Markdown 实时渲染 ──
+        case 'message_update': {
+          if (!verbose) break;
+          const ame = event.assistantMessageEvent;
+          if (ame.type === 'text_delta') {
+            if (!streamingReply) {
+              streamingReply = true;
+              process.stdout.write('\n');
+            }
+            // 行缓冲渲染：完整行才输出，表格行自动缓冲
+            const rendered = md.push(ame.delta);
+            if (rendered) process.stdout.write(rendered);
           }
-          // 行缓冲渲染：完整行才输出，表格行自动缓冲
-          const rendered = md.push(ame.delta);
-          if (rendered) process.stdout.write(rendered);
+          break;
         }
-        break;
-      }
 
-      case 'message_end': {
-        // assistant 消息结束：冲刷渲染器残余 + 重置
-        if (event.message.role === 'assistant') {
-          const remaining = md.flush();
-          if (remaining) process.stdout.write(remaining + '\n');
-          md.reset();
-          streamingReply = false;
+        case 'message_end': {
+          // assistant 消息结束：冲刷渲染器残余 + 重置
+          if (event.message.role === 'assistant') {
+            const remaining = md.flush();
+            if (remaining) process.stdout.write(remaining + '\n');
+            md.reset();
+            streamingReply = false;
+          }
+          break;
         }
-        break;
-      }
 
-      // 其他事件静默
-      default:
-        break;
-    }
-  };
+        // 其他事件静默
+        default:
+          break;
+      }
+    },
+    { setRoleName }, // 附加 setRoleName 方法
+  );
 }
 
 /** 估算工具结果的输出文本长度。 */

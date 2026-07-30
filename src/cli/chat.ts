@@ -1,5 +1,11 @@
 /**
- * CLI 交互入口：与驿馆角色对话的 REPL（带实时进度 + 斜杠命令）
+ * CLI 交互入口：与驿馆角色对话的 REPL（带实时进度 + 斜杠命令 + 自动角色转交）
+ *
+ * 核心交互流：
+ *   1. 用户输入消息
+ *   2. 当前角色 Agent 处理（可调用工具）
+ *   3. 如果 Agent 调用 transfer_to_agent → CLI 自动切换会话
+ *   4. 转交后用户继续与目标角色对话，无缝衔接
  *
  * 用法:
  *   npm run chat              ← 默认跟小二聊（日常对话、通用搜索）
@@ -29,6 +35,15 @@ import { createCompleter, handleSlashCommand } from './commands.js';
 /** 默认对话角色。 */
 const DEFAULT_ROLE = 'xiao-er';
 
+/** 转移信号正则：[TRANSFER_TO:fang-zhu] 上下文内容 */
+const TRANSFER_RE = /\[TRANSFER_TO:([a-z-]+)\]\s*(.*)/s;
+
+/** 终端颜色。 */
+const CYAN = '\x1b[36m';
+const MAGENTA = '\x1b[35m';
+const GREEN = '\x1b[32m';
+const RESET = '\x1b[0m';
+
 /**
  * 根据角色创建会话。
  *
@@ -54,12 +69,35 @@ function printBanner(roleName: string): void {
   console.log('═══════════════════════════════════════════════');
 }
 
+/** 打印角色转移横幅。 */
+function printTransferBanner(fromName: string, toName: string): void {
+  console.log(`\n${MAGENTA}═══════════════════════════════════════════════${RESET}`);
+  console.log(`${MAGENTA}  ✦ ${fromName} → ${toName}：角色转交${RESET}`);
+  console.log(`${MAGENTA}  当前接待角色已切换${RESET}`);
+  console.log(`${MAGENTA}═══════════════════════════════════════════════${RESET}\n`);
+}
+
 /** 列出当前会话挂载的工具。 */
 function listTools(session: AgentSession): string {
   const tools = session.agent.state.tools;
   if (tools.length === 0) return '当前角色未挂载任何工具。';
   const lines = tools.map((t) => `  ${t.name} — ${t.label ?? ''}`.trimEnd());
   return `当前工具（${tools.length}）：\n${lines.join('\n')}`;
+}
+
+/**
+ * 检测 agent 输出中是否包含转交信号。
+ * 如果检测到，返回目标角色代号和上下文。
+ */
+function detectTransfer(
+  output: string,
+): { targetRoleCode: string; context: string } | null {
+  const match = output.match(TRANSFER_RE);
+  if (!match) return null;
+  return {
+    targetRoleCode: match[1],
+    context: match[2].trim(),
+  };
 }
 
 async function main(): Promise<void> {
@@ -78,7 +116,7 @@ async function main(): Promise<void> {
   console.log(`正在唤醒${roleName}…`);
 
   // 进度处理器（跨角色切换复用）
-  const progressHandler = createProgressHandler();
+  const progressHandler = createProgressHandler(roleName);
 
   let session: AgentSession;
   try {
@@ -102,7 +140,7 @@ async function main(): Promise<void> {
   });
 
   while (true) {
-    const userInput = await rl.question('你 > ').catch(() => null);
+    const userInput = await rl.question(`${CYAN}你${RESET} > `).catch(() => null);
     if (userInput === null) break; // EOF
 
     const trimmed = userInput.trim();
@@ -125,6 +163,8 @@ async function main(): Promise<void> {
           session = await createSession(newRoleCode, progressHandler);
           roleCode = newRoleCode;
           roleName = newRoleName;
+          // 更新进度处理器中的角色名
+          progressHandler.setRoleName(roleName);
           console.log(`\n✦ 已切换到${newRoleName}（${newRoleCode}）\n`);
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
@@ -146,15 +186,57 @@ async function main(): Promise<void> {
       continue;
     }
 
-    // 正常对话
-    process.stdout.write(`\n${roleName} > `);
+    // ── 正常对话 + 自动角色转交 ──
+    process.stdout.write(`${GREEN}${roleName}${RESET} > `);
+    let outputText: string;
     try {
-      await session.chat(trimmed);
+      outputText = await session.chat(trimmed);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       process.stdout.write(`\n[执行出错] ${msg}`);
+      outputText = '';
     }
     process.stdout.write('\n\n');
+
+    // 检查是否需要转交
+    if (outputText) {
+      const transfer = detectTransfer(outputText);
+      if (transfer) {
+        const targetCode = transfer.targetRoleCode;
+        const context = transfer.context;
+
+        // 验证目标角色存在
+        let targetName: string;
+        try {
+          targetName = loadManifest(targetCode).name;
+        } catch {
+          console.log(`[转交失败] 目标角色「${targetCode}」不存在\n`);
+          continue;
+        }
+
+        // 打印转交横幅
+        printTransferBanner(roleName, targetName);
+
+        // 切换 session 到目标角色
+        try {
+          session = await createSession(targetCode, progressHandler);
+          roleCode = targetCode;
+          roleName = targetName;
+          progressHandler.setRoleName(roleName);
+
+          // 将上下文（用户原始请求 + 转交原因）作为首条消息发给新角色
+          const handoffMessage = `（从小二转交）${context}\n\n请继续处理。`;
+          process.stdout.write(`${GREEN}${roleName}${RESET} > `);
+          await session.chat(handoffMessage);
+          process.stdout.write('\n\n');
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          console.log(`[转交失败] ${msg}\n`);
+          // 尝试切回旧角色
+          continue;
+        }
+      }
+    }
   }
 
   console.log('\n驿馆打烊，后会有期。');
