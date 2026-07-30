@@ -13,9 +13,18 @@ import { getTools } from '../tools/registry.js';
 import { getPiModels } from '../runner/pi-backend.js';
 import { ensureInitialized } from '../bootstrap.js';
 
+/** 转交信号正则。 */
+const TRANSFER_RE = /\[TRANSFER_TO:([a-z-]+)\]\s*(.*)/s;
+
 /** 会话句柄：持有 Agent 实例，支持多轮对话。 */
 export interface AgentSession {
   agent: Agent;
+  /**
+   * 向 agent 发一条消息，返回回复文本。
+   *
+   * 返回值可能包含转交信号 `[TRANSFER_TO:xxx]`，
+   * 调用方（如 chat.ts）应检测此信号并切换 session。
+   */
   chat(message: string): Promise<string>;
 }
 
@@ -77,9 +86,31 @@ export async function createAgentSession(
     agent,
     async chat(message: string): Promise<string> {
       await agent.prompt(message);
+      // 优先检测转交信号（在 tool 结果里），有则返回信号
+      const transferSignal = extractTransferSignal(agent);
+      if (transferSignal) return transferSignal;
+      // 否则返回最后一条 assistant 文本
       return extractLastAssistantText(agent);
     },
   };
+}
+
+/**
+ * 从 agent 消息历史中提取转交信号。
+ * 扫描所有消息的文本内容，查找 `[TRANSFER_TO:xxx]` 模式。
+ */
+function extractTransferSignal(agent: Agent): string | null {
+  const messages = agent.state.messages;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const content = (messages[i] as { content?: Array<{ type: string; text?: string }> }).content;
+    if (!Array.isArray(content)) continue;
+    const text = content
+      .filter((c): c is { type: 'text'; text: string } => c.type === 'text' && typeof c.text === 'string')
+      .map((c) => c.text)
+      .join('');
+    if (TRANSFER_RE.test(text)) return text;
+  }
+  return null;
 }
 
 /** 从 agent state 末尾取最后一条 assistant 消息文本。 */

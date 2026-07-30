@@ -8,7 +8,7 @@
     "provider": "skycourier",
     "model": "deepseek-v4-flash"
   },
-  "tools": ["web_search", "aihot_fetch", "file_read", "file_write"],
+  "tools": ["web_search", "aihot_fetch", "file_read", "file_write", "transfer_to_agent"],
   "thinkingLevel": "medium",
   "timeoutSec": 300,
   "personaFile": "persona.md"
