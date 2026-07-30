@@ -7,6 +7,7 @@
 
 import { registerFileTools } from './tools/file.js';
 import { registerWebTools } from './tools/web.js';
+import { registerOrchestratorTools } from './tools/orchestrator.js';
 import { registerBuiltinCliExecutors } from './runner/cli-backend.js';
 
 let _initialized = false;
@@ -16,6 +17,7 @@ export function ensureInitialized(): void {
   if (_initialized) return;
   registerFileTools();
   registerWebTools();
+  registerOrchestratorTools();
   registerBuiltinCliExecutors();
   _initialized = true;
 }

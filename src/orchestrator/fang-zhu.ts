@@ -1,11 +1,13 @@
 /**
  * 坊主编排入口
  *
- * 坊主是一个 PI Agent，挂载所有角色作为工具（agent-as-tool）。
- * 用户与坊主对话，坊主通过 tool-calling 自主调度角色完成情报工作。
+ * 坊主是一个 PI Agent，挂载所有角色作为工具（agent-as-tool），
+ * 以及三个编排工具（generate_workflow_dsl / modify_workflow_dsl / execute_workflow）。
  *
- * 这是观天驿的核心交互模式：对话驱动编排。
- * 坊主本身不干活，只决定调用谁、传什么任务。
+ * 用户与坊主对话，坊主既可以直接 tool-calling 调度角色完成情报工作，
+ * 也可以通过编排工具生成、修改、执行完整的 Workflow DSL。
+ *
+ * 这是观天驿的核心交互模式：对话驱动 + DSL 编排双模并行。
  *
  * 详见 docs/architecture/架构设计文档.md。
  */
@@ -14,6 +16,7 @@ import { Agent, type AgentTool, type AgentEvent } from '@earendil-works/pi-agent
 import { loadManifest, loadPersona } from '../manifests/loader.js';
 import { getPiModels } from '../runner/pi-backend.js';
 import { createAllRoleTools } from '../runner/role-tools.js';
+import { generateWorkflowDslTool, modifyWorkflowDslTool, executeWorkflowTool } from '../tools/orchestrator.js';
 import { ensureInitialized } from '../bootstrap.js';
 
 // ─── 坊主 Agent ─────────────────────────────────────────────────
@@ -58,9 +61,14 @@ export async function createFangZhuSession(
   const role = loadManifest('fang-zhu');
   const systemPrompt = loadPersona('fang-zhu', role);
 
-  // 2. 装配工具：所有角色工具 + 额外工具
+  // 2. 装配工具：所有角色工具 + 编排工具（DSL 生成/修改/执行） + 用户额外工具
   const roleTools = createAllRoleTools(['fang-zhu']);
-  const tools = [...roleTools, ...(options.extraTools ?? [])];
+  const orchestratorTools: AgentTool[] = [
+    generateWorkflowDslTool,
+    modifyWorkflowDslTool,
+    executeWorkflowTool,
+  ];
+  const tools = [...roleTools, ...orchestratorTools, ...(options.extraTools ?? [])];
 
   // 3. 获取模型
   const models = getPiModels();
